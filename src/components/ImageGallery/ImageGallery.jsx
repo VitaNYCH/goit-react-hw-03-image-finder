@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Gallery } from 'components/Gallery';
+import { ImageGalleryItem } from 'components/ImageGalleryItem';
+import { Loader } from 'components/Loader';
+import css from './ImageGallery.module.css';
 export class ImageGallery extends Component {
   state = {
     imageItem: null,
@@ -28,21 +30,21 @@ export class ImageGallery extends Component {
   render() {
     const { imageItem, error, status } = this.state;
     if (status === 'idle') {
-      return <h2>Please enter name</h2>;
+      return <h2 className={css.request}>Please enter what you looking for</h2>;
     }
     if (status === 'pending') {
-      return <p>Loading...</p>;
+      return <Loader />;
     }
     if (status === 'rejected') {
       return <h1>{error.message}</h1>;
     }
     if (status === 'resolved' && imageItem.total > 0) {
-      return <Gallery imageItem={imageItem} />;
+      return <ImageGalleryItem imageItem={imageItem} />;
     }
     if (status === 'resolved' && imageItem.total === 0) {
-      return <h1>No matches with "{this.props.image}"</h1>;
+      return (
+        <h1 className={css.request}>No matches with "{this.props.image}"</h1>
+      );
     }
   }
 }
-
-// .hits.map(hit => console.log(hit))

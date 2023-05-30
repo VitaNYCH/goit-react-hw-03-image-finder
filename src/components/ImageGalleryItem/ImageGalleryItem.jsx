@@ -1,6 +1,6 @@
 import React from 'react';
-import css from './ImageGallery.module.css';
-export function Gallery({ imageItem: { hits } }) {
+import css from './ImageGalleryItem.module.css';
+export function ImageGalleryItem({ imageItem: { hits } }) {
   return (
     <ul className={css.ImageGallery}>
       {hits.map(hit => (
