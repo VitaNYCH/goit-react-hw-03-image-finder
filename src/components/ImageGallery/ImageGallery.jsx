@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { ImageGalleryItem } from 'components/ImageGalleryItem';
 import { Loader } from 'components/Loader';
+import { Button } from 'components/Button';
 import css from './ImageGallery.module.css';
 export class ImageGallery extends Component {
   state = {
@@ -39,7 +40,12 @@ export class ImageGallery extends Component {
       return <h1>{error.message}</h1>;
     }
     if (status === 'resolved' && imageItem.total > 0) {
-      return <ImageGalleryItem imageItem={imageItem} />;
+      return (
+        <>
+          <ImageGalleryItem imageItem={imageItem} />
+          <Button />
+        </>
+      );
     }
     if (status === 'resolved' && imageItem.total === 0) {
       return (
