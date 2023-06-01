@@ -17,7 +17,6 @@ export class App extends Component {
 
   render() {
     const { image } = this.state;
-    console.log(image);
     return (
       <div className={css.App}>
         <Searchbar onSubmit={this.handelFormSubmit} />

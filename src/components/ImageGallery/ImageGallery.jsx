@@ -41,7 +41,6 @@ export class ImageGallery extends Component {
     await this.setState({ status: STATUS.PENDING });
     try {
       const data = await getImages({ image, perPage, currentPage });
-      console.log(currentPage);
       if (data.hits.length === 0) {
         throw Error(`No matches found with "${this.props.image}"`);
       }
@@ -62,7 +61,6 @@ export class ImageGallery extends Component {
   };
   render() {
     const { hits, error, status, currentPage, totalPages } = this.state;
-    console.log(hits);
     if (status === STATUS.IDLE) {
       return <h2 className={css.request}>Please enter what you looking for</h2>;
     }
