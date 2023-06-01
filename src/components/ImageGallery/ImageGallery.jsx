@@ -49,7 +49,6 @@ export class ImageGallery extends Component {
         status: STATUS.RESOLVED,
         totalPages: Math.ceil(data.total / perPage),
       });
-      console.log(this.state.hits);
     } catch (error) {
       this.setState({ error: error.message, status: STATUS.REJECTED });
     }

@@ -11,6 +11,6 @@ export function Button({ handleLoadMore, status, pendingStatus }) {
 
 Button.propTypes = {
   handleLoadMore: PropTypes.func.isRequired,
-  status: PropTypes.object.isRequired,
-  pendingStatus: PropTypes.object.isRequired,
+  status: PropTypes.string.isRequired,
+  pendingStatus: PropTypes.string.isRequired,
 };
