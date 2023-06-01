@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import css from './Button.module.css';
 export function Button({ handleLoadMore, status, pendingStatus }) {
@@ -7,3 +8,9 @@ export function Button({ handleLoadMore, status, pendingStatus }) {
     </button>
   );
 }
+
+Button.propTypes = {
+  handleLoadMore: PropTypes.func.isRequired,
+  status: PropTypes.object.isRequired,
+  pendingStatus: PropTypes.object.isRequired,
+};

@@ -11,8 +11,6 @@ const STATUS = {
   RESOLVED: 'resolved',
   REJECTED: 'rejected',
 };
-// const BASE_URL = 'https://pixabay.com';
-// const KEY = '34571804-15b594ccd9e8c9a81bc1227fe';
 
 export class ImageGallery extends Component {
   state = {
@@ -27,26 +25,23 @@ export class ImageGallery extends Component {
   async componentDidUpdate(prevProps, prevState) {
     const { currentPage } = this.state;
     const prevImage = prevProps.image;
-    console.log(prevImage);
     const nextImage = this.props.image;
-    console.log(this.props.image);
+
     if (prevImage !== nextImage) {
       await this.setState({ currentPage: 1, hits: [] });
       this.fetchImages(nextImage);
     }
     if (prevState.currentPage !== currentPage) {
-      this.fetchProducts();
+      this.fetchImages(nextImage);
     }
   }
 
   fetchImages = async image => {
     const { perPage, currentPage, hits } = this.state;
     await this.setState({ status: STATUS.PENDING });
-
-    // const addImage = currentPage * perPage;
     try {
       const data = await getImages({ image, perPage, currentPage });
-
+      console.log(currentPage);
       if (data.hits.length === 0) {
         throw Error(`No matches found with "${this.props.image}"`);
       }
@@ -60,38 +55,9 @@ export class ImageGallery extends Component {
       this.setState({ error: error.message, status: STATUS.REJECTED });
     }
   };
-
-  // async componentDidUpdate(prevProps, prevState) {
-  //   const { image } = this.props;
-  //   const prevImage = prevProps.image;
-  //   const nextImage = image;
-  //   const { perPage, currentPage } = this.state;
-
-  //   if (prevImage !== nextImage) {
-  //     fetch(
-  //       `${BASE_URL}/api/?q=${nextImage}&page=${currentPage}&key=${KEY}&image_type=photo&orientation=horizontal&per_page=${perPage}`
-  //     )
-  //       .then(res => {
-  //         if (res.ok) {
-  //           return res.json();
-  //         }
-  //         return Promise.reject(new Error(`No matches with ${nextImage}`));
-  //       })
-  //       .then(imageItem =>
-  //         this.setState({
-  //           imageItem,
-  //           totalPages: Math.ceil(imageItem.total / this.state.perPage),
-  //           status: STATUS.RESOLVED,
-  //         })
-  //       )
-  //       .catch(error => this.setState({ error, status: STATUS.REJECTED }));
-  //   }
-  // }
-
   handleLoadMore = () => {
     this.setState(prevState => ({
       currentPage: prevState.currentPage + 1,
-      // perPage: prevState.perPage + 12,
     }));
   };
   render() {
@@ -107,7 +73,7 @@ export class ImageGallery extends Component {
       return <h1>{error}</h1>;
     }
     if (status === STATUS.RESOLVED) {
-      const showLoadMoreButton = hits.total === 0 && currentPage < totalPages;
+      const showLoadMoreButton = hits.legth !== 0 && currentPage < totalPages;
       return (
         <>
           <ul className={css.ImageGallery}>
@@ -126,6 +92,7 @@ export class ImageGallery extends Component {
               handleLoadMore={this.handleLoadMore}
               status={status}
               pendingStatus={STATUS.PENDING}
+              disabled={status === STATUS.PENDING ? true : false}
             />
           )}
         </>
