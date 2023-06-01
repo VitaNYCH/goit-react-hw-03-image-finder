@@ -107,7 +107,7 @@ export class ImageGallery extends Component {
       return <h1>{error}</h1>;
     }
     if (status === STATUS.RESOLVED) {
-      // const showLoadMoreButton = hits.total == 0 && currentPage < totalPages;
+      const showLoadMoreButton = hits.total === 0 && currentPage < totalPages;
       return (
         <>
           <ul className={css.ImageGallery}>
@@ -121,12 +121,13 @@ export class ImageGallery extends Component {
               </li>
             ))}
           </ul>
-
-          <Button
-            handleLoadMore={this.handleLoadMore}
-            status={status}
-            pendingStatus={STATUS.PENDING}
-          />
+          {showLoadMoreButton && (
+            <Button
+              handleLoadMore={this.handleLoadMore}
+              status={status}
+              pendingStatus={STATUS.PENDING}
+            />
+          )}
         </>
       );
     }
