@@ -23,17 +23,38 @@ export class ImageGallery extends Component {
     totalPages: 0,
     perPage: 12,
   };
-  componentDidMount() {
-    this.fetchImages();
-  }
-  componentDidUpdate(prevProps, prevState) {}
 
-  fetchImages = async () => {
+  async componentDidUpdate(prevProps, prevState) {
+    const { currentPage } = this.state;
+    const prevImage = prevProps.image;
+    console.log(prevImage);
+    const nextImage = this.props.image;
+    console.log(this.props.image);
+    if (prevImage !== nextImage) {
+      await this.setState({ currentPage: 1, hits: [] });
+      this.fetchImages(nextImage);
+    }
+    if (prevState.currentPage !== currentPage) {
+      this.fetchProducts();
+    }
+  }
+
+  fetchImages = async image => {
+    const { perPage, currentPage, hits } = this.state;
     await this.setState({ status: STATUS.PENDING });
+
+    // const addImage = currentPage * perPage;
     try {
-      const data = await getImages();
-      await this.setState({ hits: data.hits });
-      this.setState({ status: STATUS.RESOLVED });
+      const data = await getImages({ image, perPage, currentPage });
+
+      if (data.hits.length === 0) {
+        throw Error(`No matches found with "${this.props.image}"`);
+      }
+      this.setState({
+        hits: [...hits, ...data.hits],
+        status: STATUS.RESOLVED,
+        totalPages: Math.ceil(data.total / perPage),
+      });
       console.log(this.state.hits);
     } catch (error) {
       this.setState({ error: error.message, status: STATUS.REJECTED });
@@ -67,12 +88,15 @@ export class ImageGallery extends Component {
   //   }
   // }
 
-  // handleLoadMore = () => {
-  //   this.setState(prevState => ({ currentPage: prevState.currentPage + 1 }));
-  // };
+  handleLoadMore = () => {
+    this.setState(prevState => ({
+      currentPage: prevState.currentPage + 1,
+      // perPage: prevState.perPage + 12,
+    }));
+  };
   render() {
-    const { hits, error, status } = this.state;
-
+    const { hits, error, status, currentPage, totalPages } = this.state;
+    console.log(hits);
     if (status === STATUS.IDLE) {
       return <h2 className={css.request}>Please enter what you looking for</h2>;
     }
@@ -80,11 +104,10 @@ export class ImageGallery extends Component {
       return <Loader />;
     }
     if (status === STATUS.REJECTED) {
-      return <h1>{error.message}</h1>;
+      return <h1>{error}</h1>;
     }
     if (status === STATUS.RESOLVED) {
-      // const showLoadMoreButton =
-      //   imageItem.total !== 0 && currentPage < totalPages;
+      // const showLoadMoreButton = hits.total == 0 && currentPage < totalPages;
       return (
         <>
           <ul className={css.ImageGallery}>
@@ -98,6 +121,7 @@ export class ImageGallery extends Component {
               </li>
             ))}
           </ul>
+
           <Button
             handleLoadMore={this.handleLoadMore}
             status={status}
@@ -106,12 +130,5 @@ export class ImageGallery extends Component {
         </>
       );
     }
-    if (status === STATUS.RESOLVED) {
-      return (
-        <h1 className={css.request}>No matches with "{this.props.image}"</h1>
-      );
-    }
   }
 }
-
-// && imageItem.total === 0

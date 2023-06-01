@@ -16,10 +16,12 @@ export class App extends Component {
   };
 
   render() {
+    const { image } = this.state;
+    console.log(image);
     return (
       <div className={css.App}>
         <Searchbar onSubmit={this.handelFormSubmit} />
-        <ImageGallery image={this.state.image} />
+        <ImageGallery image={image} />
         <ToastContainer autoClose={3000} />
       </div>
     );
