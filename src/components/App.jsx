@@ -27,33 +27,29 @@ export class App extends Component {
     perPage: 12,
   };
 
-  async componentDidUpdate(_, prevState) {
+  componentDidUpdate(_, prevState) {
     const { currentPage } = this.state;
     const prevImage = prevState.image;
     const nextImage = this.state.image;
 
-    if (prevImage !== nextImage) {
-      await this.setState({ currentPage: 1, hits: [] });
-      this.fetchImages(nextImage);
-    }
-    if (prevState.currentPage !== currentPage) {
+    if (prevImage !== nextImage || prevState.currentPage !== currentPage) {
       this.fetchImages(nextImage);
     }
   }
 
   fetchImages = async image => {
-    const { perPage, currentPage, hits } = this.state;
+    const { perPage, currentPage } = this.state;
     await this.setState({ status: STATUS.PENDING });
     try {
       const data = await getImages({ image, perPage, currentPage });
       if (data.hits.length === 0) {
         throw Error(`No matches found with "${this.state.image}"`);
       }
-      this.setState({
-        hits: [...hits, ...data.hits],
+      this.setState(prevState => ({
+        hits: [...prevState.hits, ...data.hits],
         status: STATUS.RESOLVED,
         totalPages: Math.ceil(data.total / perPage),
-      });
+      }));
     } catch (error) {
       this.setState({ error: error.message, status: STATUS.REJECTED });
     }
@@ -65,7 +61,7 @@ export class App extends Component {
   };
 
   handelFormSubmit = image => {
-    this.setState({ image });
+    this.setState({ image, currentPage: 1, hits: [] });
   };
 
   render() {
@@ -84,7 +80,7 @@ export class App extends Component {
           <h1 className={css.ErrorTitle}>{error}</h1>
         )}
         {status === STATUS.RESOLVED && <ImageGallery hits={hits} />}
-        <ToastContainer autoClose={3000} />
+
         {showLoadMoreButton && (
           <Button
             handleLoadMore={this.handleLoadMore}
@@ -93,6 +89,7 @@ export class App extends Component {
             disabled={status === STATUS.PENDING ? true : false}
           />
         )}
+        <ToastContainer autoClose={3000} />
       </div>
     );
   }
