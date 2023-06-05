@@ -79,7 +79,7 @@ export class App extends Component {
         {status === STATUS.REJECTED && (
           <h1 className={css.ErrorTitle}>{error}</h1>
         )}
-        {status === STATUS.RESOLVED && <ImageGallery hits={hits} />}
+        {hits.length > 0 && <ImageGallery hits={hits} />}
 
         {showLoadMoreButton && (
           <Button
